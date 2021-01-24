@@ -4,12 +4,11 @@ using System.Collections.Generic;
 
 namespace DataBaseLayer
 {
-    public class MongoCURD
+    public class MongoCURD : IMongoCURD
     {
         private readonly IMongoDatabase db;
         private readonly string collectionName = "Blog";
-        private readonly  string connectionString  = "connection string";
-        public MongoCURD(string databse)
+        public MongoCURD(string databse,string connectionString)
         {
             MongoClient client = new MongoClient(connectionString);
             db = client.GetDatabase(databse);
