@@ -1,6 +1,7 @@
 using BlogApi.Models;
 using DataBaseLayer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 namespace BlogApi.Controllers
@@ -9,11 +10,13 @@ namespace BlogApi.Controllers
     [Route("[controller]")]
     public class BlogController : ControllerBase
     {
-        private readonly MongoCURD db;
+        private readonly IMongoCURD db;
+        private readonly IOptions<AppSettings> _settings;
 
-        public BlogController()
+        public BlogController(IMongoCURD db, IOptions<AppSettings> settings)
         {
-            db = new MongoCURD("ArunJoshi");
+            this.db = db;
+            _settings = settings;
         }
 
         [HttpGet("GetAllBlogs")]
