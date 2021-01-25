@@ -25,11 +25,15 @@ namespace BlogApi.Controllers
             return db.GetRecords<Blog>();
         }
 
-        [HttpGet("InsertBlog")]
-        public Blog InsertBlog()
+        [HttpPost("InsertBlog")]
+        public IActionResult InsertBlog(Blog blog)
         {
-            Blog blog = db.InsertBlog<Blog>(new Blog { Name = "blog test", Description = "api test", User = "postman" });
-            return blog;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(blog);
+            }
+            Blog res = db.InsertBlog(blog);
+            return Ok(blog);
         }
 
         [HttpDelete("DeleteBlog")]
