@@ -9,6 +9,7 @@ namespace BlogApi.Models
     {
         public string ConnectionString { get; set; }
         public string DbName { get; set; }
+        public string JwtKey { get; set; }
     }
 
 
@@ -16,5 +17,7 @@ namespace BlogApi.Models
     {
         public string ConnectionString { get; set; }
         public string DbName { get; set; }
+        public string JwtKey { get; set; }
+
     }
 }
