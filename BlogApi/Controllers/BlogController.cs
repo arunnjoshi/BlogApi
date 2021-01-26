@@ -1,5 +1,6 @@
 using BlogApi.Models;
 using DataBaseLayer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
@@ -8,6 +9,8 @@ namespace BlogApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Roles ="user")]
+
     public class BlogController : ControllerBase
     {
         private readonly IMongoCURD db;
