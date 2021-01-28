@@ -1,3 +1,4 @@
+using BlogApi.common;
 using BlogApi.Models;
 using DataBaseLayer;
 using Microsoft.AspNetCore.Authorization;
@@ -9,8 +10,12 @@ namespace BlogApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Roles ="user")]
-
+    // AuthorizeMultipleRoles custom authorization with roles ('HR,user') ,true means all roles required (default false)
+    // we check all three condition
+    [TypeFilter(typeof(AuthorizeMultipleRoles), Arguments = new object[] { "HR,user",true })] // req all roles 
+    [TypeFilter(typeof(AuthorizeMultipleRoles), Arguments = new object[] { "admin,HR" })]  // reqire only one roles from HR,admin
+    [TypeFilter(typeof(AuthorizeMultipleRoles), Arguments = new object[] { "PP" })]  // required PP role
+    // hence user requied HR,user,PP or HR,user,admin,PP role to acces this controller
     public class BlogController : ControllerBase
     {
         private readonly IMongoCURD db;
@@ -36,10 +41,10 @@ namespace BlogApi.Controllers
         }
 
         [HttpDelete("DeleteBlog")]
-        public string DeleteBlog(string id)
+        public bool DeleteBlog(string id)
         {
             var blog = db.DelteBlog<Blog>(id);
-            return "done";
+            return blog;
         }
     }
 }

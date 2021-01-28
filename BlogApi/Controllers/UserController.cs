@@ -1,11 +1,13 @@
 ﻿using BlogApi.Jwt;
 using BlogApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IJwtAuthManager authManager;
@@ -14,7 +16,9 @@ namespace BlogApi.Controllers
         {
             this.authManager = authManager;
         }
+
         [HttpPost("Login")]
+        [AllowAnonymous]
         public IActionResult Login(User user)
         {
             var token = authManager.AuthEnticate(user.UserName, user.Password);

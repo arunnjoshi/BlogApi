@@ -1,4 +1,5 @@
-﻿using BlogApi.Models;
+﻿using BlogApi.common;
+using BlogApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -12,14 +13,18 @@ namespace BlogApi.Jwt
     public class JwtAuthManager : IJwtAuthManager
     {
         private readonly string key;
+        private readonly IMongoUser mongoUser;
 
-        public JwtAuthManager(string key)
+        public JwtAuthManager(string key, IMongoUser mongoUser)
         {
             this.key = key;
+            this.mongoUser = mongoUser;
         }
+
+
         private List<User> users = new List<User>
         {
-            new User{UserName="arun",Password="test@123",Roles="user"}
+            new User{UserName="arun",Password="test@123",Roles="user,HR,admin,PP"}
 
         };
 
@@ -39,10 +44,23 @@ namespace BlogApi.Jwt
 
                 }),
                 Expires = DateTime.UtcNow.AddDays(10),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha512Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescripter);
             return tokenHandler.WriteToken(token);
+        }
+
+        public TokenValidationParameters GetTokenValidationParameters()
+        {
+            var key = Encoding.ASCII.GetBytes(this.key);
+            var validations = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
+            return validations;
         }
     }
 }
