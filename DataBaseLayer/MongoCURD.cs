@@ -28,11 +28,19 @@ namespace DataBaseLayer
             return blogPost;
         }
 
-        public DeleteResult DelteBlog<T>(string id)
+        public bool DelteBlog<T>(string id)
         {
-            IMongoCollection<T> collection = db.GetCollection<T>(collectionName);
-            var deletedBlog = collection.DeleteOne(Builders<T>.Filter.Eq("Id", id));
-            return deletedBlog;
+            try
+            {
+                IMongoCollection<T> collection = db.GetCollection<T>(collectionName);
+                var deletedBlog = collection.DeleteOne(Builders<T>.Filter.Eq("Id", id));
+                return true;
+            }
+            catch 
+            {
+
+                return false;
+            }
         }
     }
 }

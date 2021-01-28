@@ -9,6 +9,6 @@ namespace DataBaseLayer
     {
         public List<T> GetRecords<T>();
         public T InsertBlog<T>(T blogPost);
-        public DeleteResult DelteBlog<T>(string id);
+        public bool DelteBlog<T>(string id);
     }
 }

@@ -1,3 +1,4 @@
+using BlogApi.common;
 using BlogApi.Jwt;
 using BlogApi.Models;
 using DataBaseLayer;
@@ -28,6 +29,8 @@ namespace BlogApi
             services.AddControllers();
             //configure AppSettings
             services.Configure<AppSettings>(Configuration.GetSection(nameof(AppSettings)));
+            //Inject MongoUser
+            services.AddSingleton<IMongoUser, MongoUser>();
 
             //Configure MogoCurd
             services.AddSingleton<IMongoCURD>(x => new MongoCURD(
@@ -36,22 +39,26 @@ namespace BlogApi
                 )
             );
             // jwt injection
-            services.AddSingleton<IJwtAuthManager>(new JwtAuthManager(jwtKey));
+            services.AddSingleton<IJwtAuthManager>(new JwtAuthManager(jwtKey,new MongoUser()));
 
+            // jwt authtoken 
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x => {
+            }).AddJwtBearer(x =>
+            {
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
             });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
