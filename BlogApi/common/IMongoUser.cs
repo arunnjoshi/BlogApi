@@ -4,8 +4,6 @@ namespace BlogApi.common
 {
     public interface IMongoUser
     {
-
-        public User AuthenticateUser(User user);
+        public UserModel RegisterUser(UserModel user);
     }
-
 }

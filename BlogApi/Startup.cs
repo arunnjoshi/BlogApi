@@ -1,3 +1,4 @@
+using AutoMapper;
 using BlogApi.common;
 using BlogApi.Jwt;
 using BlogApi.Models;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -22,26 +22,30 @@ namespace BlogApi
         }
 
         public IConfiguration Configuration { get; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var jwtKey = Configuration.GetSection("AppSettings:JwtKey").Value;
+            var dbName = Configuration.GetSection("AppSettings:DbName").Value;
+            var connectionString = Configuration.GetSection("AppSettings:ConnectionString").Value;
+
             services.AddControllers();
             //configure AppSettings
             services.Configure<AppSettings>(Configuration.GetSection(nameof(AppSettings)));
-            //Inject MongoUser
-            services.AddSingleton<IMongoUser, MongoUser>();
+            //IOptions<AppSettings> appSettings =(AppSettings) Configuration.GetSection(nameof(AppSettings));
+            services.AddAutoMapper(typeof(MappingProfiles));
 
             //Configure MogoCurd
-            services.AddSingleton<IMongoCURD>(x => new MongoCURD(
-                 x.GetRequiredService<IOptions<AppSettings>>().Value.DbName,
-                 x.GetRequiredService<IOptions<AppSettings>>().Value.ConnectionString
-                )
-            );
-            // jwt injection
-            services.AddSingleton<IJwtAuthManager>(new JwtAuthManager(jwtKey,new MongoUser()));
+            services.AddSingleton<IMongoCURD>(new MongoCURD(dbName, connectionString));
 
-            // jwt authtoken 
+            // Mongo Injection
+            services.AddSingleton<IMongoUser>(new MongoUser(connectionString, dbName));
+
+            // jwt injection
+            services.AddSingleton<IJwtAuthManager>(new JwtAuthManager(jwtKey, new MongoUser(connectionString, dbName)));
+
+            // jwt authtoken
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,7 +62,6 @@ namespace BlogApi
                     ValidateAudience = false
                 };
             });
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

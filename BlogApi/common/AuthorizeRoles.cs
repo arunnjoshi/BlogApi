@@ -1,8 +1,6 @@
 ﻿using BlogApi.Jwt;
-using BlogApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Options;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -15,10 +13,9 @@ namespace BlogApi.common
     {
         string[] roles;
         IJwtAuthManager jwtAuthManager;
-        private readonly IOptions<AppSettings> _settings;
         bool requireAll;
 
-        public AuthorizeMultipleRoles(IJwtAuthManager jwtAuthManager, string roles,bool requireAll=false)
+        public AuthorizeMultipleRoles(IJwtAuthManager jwtAuthManager, string roles, bool requireAll = false)
         {
             this.roles = roles.Split(',');
             this.jwtAuthManager = jwtAuthManager;
@@ -64,7 +61,7 @@ namespace BlogApi.common
                     };
                     return;
                 }
-                var hasRoles = requireAll ? HasRolesRequireAll(_token): HasRoles(_token);
+                var hasRoles = requireAll ? HasRolesRequireAll(_token) : HasRoles(_token);
                 if (hasRoles)
                 {
                     return;
