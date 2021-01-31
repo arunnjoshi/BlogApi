@@ -1,7 +1,6 @@
 using BlogApi.common;
 using BlogApi.Models;
 using DataBaseLayer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ namespace BlogApi.Controllers
     [Route("[controller]")]
     // AuthorizeMultipleRoles custom authorization with roles ('HR,user') ,true means all roles required (default false)
     // we check all three condition
-    [TypeFilter(typeof(AuthorizeMultipleRoles), Arguments = new object[] { "HR,user",true })] // req all roles 
+    [TypeFilter(typeof(AuthorizeMultipleRoles), Arguments = new object[] { "HR,user", true })] // req all roles
     [TypeFilter(typeof(AuthorizeMultipleRoles), Arguments = new object[] { "admin,HR" })]  // reqire only one roles from HR,admin
     [TypeFilter(typeof(AuthorizeMultipleRoles), Arguments = new object[] { "PP" })]  // required PP role
     // hence user requied HR,user,PP or HR,user,admin,PP role to acces this controller
