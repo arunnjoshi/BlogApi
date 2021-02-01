@@ -238,3 +238,8 @@ _Pvt_Extensions
 *.pdb
 *.dll
 *sln
+.idea
+bin
+obj
+.vs
+

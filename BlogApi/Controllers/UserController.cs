@@ -12,24 +12,24 @@ namespace BlogApi.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly IJwtAuthManager authManager;
-        private readonly IMongoUser mongoUser;
-        private readonly IMapper mapper;
+        private readonly IJwtAuthManager _authManager;
+        private readonly IMongoUser _mongoUser;
+        private readonly IMapper _mapper;
 
         public UserController(IJwtAuthManager authManager, IMongoUser mongoUser, IMapper mapper)
         {
-            this.authManager = authManager;
-            this.mongoUser = mongoUser;
-            this.mapper = mapper;
+            this._authManager = authManager;
+            this._mongoUser = mongoUser;
+            this._mapper = mapper;
         }
 
         [HttpPost("Login")]
         [AllowAnonymous]
-        public IActionResult Login(User user)
+        public IActionResult Login(SignInModel user)
         {
             try
             {
-                var token = authManager.AuthEnticate(user.UserName, user.Password);
+                var token = _authManager.AuthEnticate(user.Email, user.Password);
                 if (string.IsNullOrEmpty(token))
                     return Unauthorized();
                 return Ok(token);
@@ -42,15 +42,15 @@ namespace BlogApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("RegisterUser")]
-        public IActionResult RegisterUser(UserRegisterationModel User)
+        public IActionResult RegisterUser(UserRegisterationModel user)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-                var mappedModel = mapper.Map<UserRegisterationModel, UserModel>(User);
-                mongoUser.RegisterUser(mappedModel);
-                return Ok("User Registeration Successfully!");
+                var mappedModel = _mapper.Map<UserRegisterationModel, UserModel>(user);
+                _mongoUser.RegisterUser(mappedModel);
+                return Ok("User Registration Successfully!");
             }
             catch
             {
