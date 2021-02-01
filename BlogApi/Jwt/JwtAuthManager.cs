@@ -21,14 +21,9 @@ namespace BlogApi.Jwt
             this.mongoUser = mongoUser;
         }
 
-        private List<User> users = new List<User>
-        {
-            new User{UserName="arun",Password="test@123",Roles="user,HR,admin,PP"}
-        };
-
         public string AuthEnticate(string userName, string password)
         {
-            var user = users.Where(x => x.UserName == userName && x.Password == password).First();
+            var user = mongoUser.ValidateUser(userName,password);
             if (user == null)
                 return null;
             var tokenHandler = new JwtSecurityTokenHandler();
