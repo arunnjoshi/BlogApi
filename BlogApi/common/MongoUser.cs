@@ -14,7 +14,7 @@ namespace BlogApi.common
         public MongoUser(string connectionString, string dbName)
         {
             MongoClient client = new MongoClient(connectionString);
-            db                 = client.GetDatabase(dbName);
+            db = client.GetDatabase(dbName);
         }
 
         public UserModel RegisterUser(UserModel user)

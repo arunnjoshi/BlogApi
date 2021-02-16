@@ -14,10 +14,10 @@ namespace BlogApi.Jwt
     {
         private readonly string key;
         private readonly IMongoUser mongoUser;
-        
+
         public JwtAuthManager(string key, IMongoUser mongoUser)
         {
-            this.key       = key;
+            this.key = key;
             this.mongoUser = mongoUser;
         }
 

@@ -26,8 +26,8 @@ namespace BlogApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var jwtKey           = Configuration.GetSection("AppSettings:JwtKey").Value;
-            var dbName           = Configuration.GetSection("AppSettings:DbName").Value;
+            var jwtKey = Configuration.GetSection("AppSettings:JwtKey").Value;
+            var dbName = Configuration.GetSection("AppSettings:DbName").Value;
             var connectionString = Configuration.GetSection("AppSettings:ConnectionString").Value;
 
             services.AddControllers();
@@ -52,14 +52,14 @@ namespace BlogApi
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
             {
-                x.RequireHttpsMetadata      = false;
-                x.SaveToken                 = true;
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey         = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
-                    ValidateIssuer           = false,
-                    ValidateAudience         = false
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
                 };
             });
         }
