@@ -61,7 +61,7 @@ namespace BlogApi.common
                     };
                     return;
                 }
-                var hasRoles = requireAll ? HasRolesRequireAll(_token) : HasRoles(_token);
+                var hasRoles = requireAll ? HasAllRequiredRoles(_token) : HasRoles(_token);
                 if (hasRoles)
                 {
                     return;
@@ -100,7 +100,7 @@ namespace BlogApi.common
             }
         }
 
-        private bool HasRolesRequireAll(string token)
+        private bool HasAllRequiredRoles(string token)
         {
             try
             {
