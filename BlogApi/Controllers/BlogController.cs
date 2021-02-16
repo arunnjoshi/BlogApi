@@ -22,7 +22,7 @@ namespace BlogApi.Controllers
 
 		public BlogController(IMongoCURD db, IOptions<AppSettings> settings)
 		{
-			this.db = db;
+			this.db   = db;
 			_settings = settings;
 		}
 
