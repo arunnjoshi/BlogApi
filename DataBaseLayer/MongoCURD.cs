@@ -11,7 +11,7 @@ namespace DataBaseLayer
 		public MongoCURD(string databse, string connectionString)
 		{
 			MongoClient client = new MongoClient(connectionString);
-			db                 = client.GetDatabase(databse);
+			db = client.GetDatabase(databse);
 		}
 
 		public List<T> GetRecords<T>()
