@@ -2,9 +2,7 @@
 using BlogApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -14,16 +12,16 @@ namespace BlogApi.Jwt
     {
         private readonly string key;
         private readonly IMongoUser mongoUser;
-        
-        public JwtAuthManager(string key, IMongoUser mongoUser)
+
+        public JwtAuthManager(AppSettings appSettings, IMongoUser mongoUser)
         {
-            this.key       = key;
+            key = appSettings.JwtKey;
             this.mongoUser = mongoUser;
         }
 
         public string AuthEnticate(string userName, string password)
         {
-            var user = mongoUser.ValidateUser(userName,password);
+            var user = mongoUser.ValidateUser(userName, password);
             if (user == null)
                 return null;
             var tokenHandler = new JwtSecurityTokenHandler();

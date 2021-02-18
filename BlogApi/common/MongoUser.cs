@@ -11,10 +11,10 @@ namespace BlogApi.common
         private readonly IMongoDatabase db;
         private readonly string collectionName = "User";
 
-        public MongoUser(string connectionString, string dbName)
+        public MongoUser(AppSettings appSettings)
         {
-            MongoClient client = new MongoClient(connectionString);
-            db                 = client.GetDatabase(dbName);
+            MongoClient client = new MongoClient(appSettings.ConnectionString);
+            db                 = client.GetDatabase(appSettings.DbName);
         }
 
         public UserModel RegisterUser(UserModel user)

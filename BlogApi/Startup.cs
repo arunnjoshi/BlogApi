@@ -1,3 +1,4 @@
+using Autofac;
 using AutoMapper;
 using BlogApi.common;
 using BlogApi.Jwt;
@@ -26,25 +27,28 @@ namespace BlogApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var jwtKey           = Configuration.GetSection("AppSettings:JwtKey").Value;
-            var dbName           = Configuration.GetSection("AppSettings:DbName").Value;
-            var connectionString = Configuration.GetSection("AppSettings:ConnectionString").Value;
+            var appSettings = new AppSettings();
+            Configuration.GetSection(nameof(AppSettings)).Bind(appSettings);
+            // add dependency container
+            var depdency = new ContainerFactory(Configuration);
+            var container = depdency.container;
 
             services.AddControllers();
-            //configure AppSettings
-            services.Configure<AppSettings>(Configuration.GetSection(nameof(AppSettings)));
-            //IOptions<AppSettings> appSettings =(AppSettings) Configuration.GetSection(nameof(AppSettings));
+            // auto mappper
             services.AddAutoMapper(typeof(MappingProfiles));
+            //configure AppSettings IMongoCURD IMongoUser
+            services.AddSingleton(container.Resolve<AppSettings>());
+            services.AddSingleton(container.Resolve<IMongoCURD>());
+            services.AddSingleton(container.Resolve<IMongoUser>());
 
+            //jwt injection
+            services.AddSingleton(container.Resolve<IJwtAuthManager>());
             //Configure MogoCurd
-            services.AddSingleton<IMongoCURD>(new MongoCURD(dbName, connectionString));
-
+            //services.AddSingleton<IMongoCURD>(new MongoCURD(dbName, connectionString));
             // Mongo Injection
-            services.AddSingleton<IMongoUser>(new MongoUser(connectionString, dbName));
-
-            // jwt injection
-            services.AddSingleton<IJwtAuthManager>(new JwtAuthManager(jwtKey, new MongoUser(connectionString, dbName)));
-
+            //services.AddSingleton(container.Resolve<IMongoUser>(
+            //        new NamedParameter("connectionString", connectionString), new NamedParameter("dbName", dbName))
+            //    );
             // jwt authtoken
             services.AddAuthentication(x =>
             {
@@ -52,14 +56,14 @@ namespace BlogApi
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
             {
-                x.RequireHttpsMetadata      = false;
-                x.SaveToken                 = true;
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey         = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
-                    ValidateIssuer           = false,
-                    ValidateAudience         = false
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.JwtKey)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
                 };
             });
         }
