@@ -30,8 +30,8 @@ namespace BlogApi
             var appSettings = new AppSettings();
             Configuration.GetSection(nameof(AppSettings)).Bind(appSettings);
             // add dependency container
-            var dependency = new ContainerFactory(Configuration);
-            var container = dependency.container;
+            var depdency = new ContainerFactory(Configuration);
+            var container = depdency.container;
 
             services.AddControllers();
             // auto mappper
